@@ -11,3 +11,6 @@ phpunit.xml
 /phpstan.neon
 /*.pid
 /*.pid.lock
+docker
+.pid
+database.sqlite

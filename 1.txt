@@ -1,0 +1,21 @@
+构建镜像：
+docker build -t hub_url_bin .
+
+
+启动服务：
+docker run -d --name hub_url_bin -p 80:80 -v D:/hubBox/hub_url_bin:/var/www hub_url_bin
+
+
+查看服务的id:
+docker ps
+
+
+停止服务：
+docker stop <container_id> && docker rm <container_id>
+
+
+参考文档：
+https://www.workerman.net/a/1336
+
+event下载地址:
+http://pecl.php.net/get/event-3.1.2.tgz

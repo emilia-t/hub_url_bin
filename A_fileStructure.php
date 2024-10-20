@@ -11,3 +11,5 @@
 //J                     数据库文件，数据库模板           *sqlite
 
 //P                     JS文件                                        *js
+
+//L                     windows或linux脚本                 *sh     *bat
