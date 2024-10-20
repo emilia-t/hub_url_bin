@@ -25,7 +25,7 @@ HTML;
         return <<<CSS
         .LayerAnchor{
             width: auto;
-            height: 20px;
+            height: 15px;
             font-size: 12px;
             font-weight: 100;
             background: #121212;
@@ -41,43 +41,18 @@ CSS;
     // 白色模式样式
     private function whiteStyles() {
         return <<<CSS
-        body {
-            background-color: #ffffff;
-            color: #000000;
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-        .header {
-            background-color: #f0f0f0;
-            padding: 10px 20px;
-        }
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-        }
-        .menu {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            gap: 20px;
-        }
-        .menu li {
-            display: inline;
-        }
-        .menu a {
-            color: #000000;
-            text-decoration: none;
-            padding: 8px 12px;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-        .menu a:hover {
-            background-color: #dddddd;
+         .LayerAnchor{
+            width: auto;
+            height: 15px;
+            font-size: 12px;
+            font-weight: 100;
+            background: #fefefe;
+            color: #121212;
+            padding: 10px;
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            z-index: 600;
         }
 CSS;
     }

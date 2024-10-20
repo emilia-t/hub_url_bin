@@ -39,6 +39,7 @@ HTML;
             font-family: Arial, sans-serif;
         }
         .header {
+            width: calc(100% - 40px);
             position: fixed;
             z-index: 500;
             top: 0;
@@ -86,6 +87,7 @@ CSS;
             font-family: Arial, sans-serif;
         }
         .header {
+            width: calc(100% - 40px);
             position: fixed;
             z-index: 500;
             top: 0;

@@ -12,7 +12,6 @@ class LayerContent {
     }
     // 输出 html 代码
     public function export($webList){
-        echo "exportingContent\n";
         $backgroundColor = $this->theme === 'dark' ? '#333' : '#fff';// 根据主题选择不同的样式
         $textColor = $this->theme === 'dark' ? '#fff' : '#000';
         $html = <<<HTML
@@ -60,9 +59,6 @@ class LayerContent {
         </style>
         <div class="app-grid">
 HTML;
-        echo "\ncontent class webList------->\n";
-        print_r($webList);
-        echo "\ncontent class webList<-------\n";
         foreach ($webList as $web) {
             $url = $web['url'];
             $title = htmlspecialchars($web['title'], ENT_QUOTES, 'UTF-8');

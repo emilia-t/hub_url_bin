@@ -14,3 +14,4 @@ phpunit.xml
 docker
 .pid
 database.sqlite
+workerman.log
