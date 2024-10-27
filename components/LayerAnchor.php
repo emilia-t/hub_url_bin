@@ -18,7 +18,7 @@ class LayerAnchor{
     $styles
 </style>
 <div id="LayerAnchor" class="LayerAnchor-white">
-    Power by hub_url_bin (C) Minxi Wan
+    当前连接数：1&nbsp;&nbsp;
 </div>
 <script>
     $scripts
@@ -33,7 +33,7 @@ HTML;
             height: 15px;
             font-size: 12px;
             font-weight: 100;
-            padding: 10px;
+            padding: 7px;
             position: fixed;
             right: 0;
             bottom: 0;

@@ -20,7 +20,11 @@ class LayerServices
         </style>
         <div class="LayerServices-dark" id="LayerServices">
             <div class="LayerServicesApp" id="LayerServicesApp">
-                <button class="LayerServicesBtn" id="LayerServicesBtn">⯈</button>
+                <button class="LayerServicesBtn" id="LayerServicesBtn">
+                    <svg width="17" height="17" viewBox="0 0 100 100">
+                        <polygon points="60,20 20,50 60,80"/>
+                    </svg>
+                </button>
                 <div id="LayerServicesList">
                 
                 </div>
@@ -69,9 +73,13 @@ HTML;
                 left: -40px;
                 top: 20px;
                 border: none;
-                padding: 5px 10px;
+                padding: 5px 7px;
                 cursor: pointer;
                 border-radius: 5px;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
             }
             .LayerServices-dark .LayerServicesBtn{
                 background-color: #282828;
@@ -117,7 +125,7 @@ HTML;
                 background-color: rgba(0, 0, 0, 0.1);
             }
             .LayerServices-white .LayerServicesPorts a{
-                background-color: rgba(255, 255, 255, 0.1);
+                background-color: rgba(175, 175, 175, 0.1);
             }
             .LayerServices-dark .LayerServicesPorts a:hover{
                 background-color: rgba(255, 255, 255, 0.3);

@@ -1,6 +1,6 @@
 let LayerAnchor=document.getElementById("LayerAnchor");
 LayerAnchor.addEventListener("click",()=>{
-    console.log("power by hub_url_bin");
+    console.log("Power by hub_url_bin (C) Minxi Wan");
 });
 
 subscribe(
@@ -13,6 +13,15 @@ subscribe(
         if(newValue==='white'){
             LayerAnchor.classList.add('LayerAnchor-white');
             LayerAnchor.classList.remove('LayerAnchor-dark');
+        }
+    }
+);
+
+subscribe(
+    'onlineNumber',
+    function(newValue){
+        if(typeof newValue==='number'){
+            LayerAnchor.innerHTML='当前连接数：'+newValue+'&nbsp;&nbsp;';
         }
     }
 );

@@ -20,7 +20,8 @@ class Instruct{//综合的一个连接服务端的通讯类
             'broadcast','get_serverConfig','get_publickey','publickey','login',
             'login','loginStatus',
             'get_webs','send_webs',
-            'get_ports','send_ports'
+            'get_ports','send_ports',
+            'get_onlineNumber','send_onlineNumber'
         ];
         this.Instruct={//指令合集
             ping(){
@@ -48,6 +49,9 @@ class Instruct{//综合的一个连接服务端的通讯类
             },
             get_ports(){
                 return {type:'get_ports'}
+            },
+            get_onlineNumber(){
+                return {type:'get_onlineNumber'}
             },
             broadcast_themeChange(theme){
                 return {type:'broadcast',class:'themeChange',data:{theme:theme}}
@@ -162,6 +166,17 @@ class Instruct{//综合的一个连接服务端的通讯类
                 }
                 break;
             }
+            case 'send_onlineNumber':{
+                if('data' in DATA){
+                    if('number' in DATA.data){
+                        status=typeof DATA.data.number==='number';
+                    }else{
+                        status=false;
+                    }
+                }else {
+                    status=false;
+                }
+            }
             default:{break;}
         }
         return status;
@@ -210,6 +225,9 @@ class Instruct{//综合的一个连接服务端的通讯类
     }
     getPorts(){
         this.send(this.Instruct.get_ports());
+    }
+    getOnlineNumber(){
+        this.send(this.Instruct.get_onlineNumber());
     }
     login(email,password){//登录方法
         let pat=new RegExp('[^a-zA-Z0-9\_@.+/=-]');
@@ -339,6 +357,10 @@ class Instruct{//综合的一个连接服务端的通讯类
                     }
                     break;
                 }
+                case 'send_onlineNumber':{
+                    $store['onlineNumber']=jsonData.data.number;
+                    break;
+                }
                 case 'send_webs':{
                     $store['webs']=jsonData.data.webs;
                     break;
@@ -379,6 +401,7 @@ class Instruct{//综合的一个连接服务端的通讯类
         this.getServerConfig();
         this.getWebs();
         this.getPorts();
+        this.getOnlineNumber();
         return true;
     }
 }

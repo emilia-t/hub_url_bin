@@ -67,6 +67,17 @@ class D_instruct
             return $obj;
         }
     }
+    public function send_onlineNumber($number){
+        $obj=[
+            'type'=>'send_onlineNumber',
+            'data'=>['number'=>$number]
+        ];
+        if($this->packed){
+            return json_encode($obj,$this->options);
+        }else{
+            return $obj;
+        }
+    }
     public function broadcast_themeChange($theme){
         $obj = [
             'type'=>'broadcast',

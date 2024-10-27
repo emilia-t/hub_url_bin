@@ -18,8 +18,10 @@ class LayerContent {
         <style>
             $styles
         </style>
-        <div class="LayerContent" id="LayerContent">
-        
+        <div class="LayerContentBox">
+            <div class="LayerContent" id="LayerContent">
+            
+            </div>
         </div>
         <script>
             $scripts
@@ -33,30 +35,44 @@ HTML;
                 background-color: #ffffff;
                 color: #000000;
                 font-family: Arial, sans-serif;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
+                height: 100%;
+                width: 100%;
                 margin: 0;
             }
-            .LayerContent {
-                margin-top: 120px;
+            html{
+                height: 100%;
+                width: 100%;
+                margin: 0;
+            }
+            .LayerContentAppItemV{
+                width: 110px;
+                height: 110px;
+            }
+            .LayerContentBox{
+                width:100%;
+                height:auto;
+                display:flex;
+                flex-direction:row;
+                flex-wrap:wrap;
+                justify-content:flex-start;
+            }
+            .LayerContent{
+                padding: 100px 0px;
+                width: 100%;
+                height: auto;
                 display: flex;
                 flex-wrap: wrap;
                 gap: 20px;
                 justify-content: center;
             }
-            .LayerContentAppItem {
+            .LayerContentAppItem{
                 width: 90px;
                 height: 90px;
-                background-color: #9caff2;
-                color: #000000;
                 border-radius: 10px;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
                 text-align: center;
                 text-decoration: none;
                 padding: 10px;
@@ -64,12 +80,12 @@ HTML;
             .LayerContentAppItem-dark{
                 background-color: #000000;
                 color: #ffffff;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             }
             .LayerContentAppItem-white{
-                background-color: #9caff2;
                 color: #000000;
             }
-            .LayerContentAppTitle {
+            .LayerContentAppTitle{
                 width: 100%;
                 height: auto;
                 max-height: 36px;
@@ -77,12 +93,12 @@ HTML;
                 text-overflow: ellipsis;
                 white-space: nowrap;
             }
-            .LayerContentAppItem img {
+            .LayerContentAppItem img{
                 width: 30px;
                 height: 30px;
                 margin-bottom: 10px;
             }
-            .LayerContentAppItem span {
+            .LayerContentAppItem span{
                 font-size: 14px;
                 word-wrap: break-word;
             }

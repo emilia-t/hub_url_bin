@@ -2,7 +2,7 @@ let LayerServices=document.getElementById('LayerServices');
 let LayerServicesApp=document.getElementById('LayerServicesApp');
 let LayerServicesList=document.getElementById('LayerServicesList');
 
-let computerSvgA=()=>{
+let ComputerSvgA=()=>{
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     document.createElement("SVG");
     svg.setAttribute("class", "icon");
@@ -21,7 +21,7 @@ let getNewItemService=(ip,ports)=>{
     let len=portsArr.length;
     let domItem=document.createElement('DIV');
     let domBoxA=document.createElement('DIV');
-    let svg=computerSvgA();
+    let svg=ComputerSvgA();
     let domBoxB=document.createElement('DIV');
     let domIp=document.createElement('DIV');
     let domPorts=document.createElement('DIV');
@@ -58,10 +58,10 @@ let getNewItemService=(ip,ports)=>{
 document.getElementById("LayerServicesBtn").addEventListener("click", function() {
     if(LayerServicesApp.classList.contains("visible")){
         LayerServicesApp.classList.remove("visible");
-        this.textContent = "⯈";
+        this.style.transform='rotate(0deg)';
     }else{
         LayerServicesApp.classList.add("visible");
-        this.textContent = "⯇";
+        this.style.transform='rotate(180deg)';
     }
 });
 

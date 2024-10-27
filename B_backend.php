@@ -19,6 +19,7 @@ require_once 'components/LayerContent.php';
 require_once 'components/LayerAnchor.php';
 require_once 'components/LayerServices.php';
 require_once 'components/LayerNetwork.php';
+require_once 'components/LayerVoice.php';
 /// php设置///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -68,6 +69,8 @@ $EtLayerServices=new LayerServices();
 $EtLayerServicesHtml=null;
 $EtLayerNetwork=new LayerNetwork();
 $EtLayerNetworkHtml=null;
+$EtLayerVoice=new LayerVoice();
+$EtLayerVoiceHtml=null;
 $newJDT=new D_JDT();
 $newQIR=new D_QIR();
 $newFO=new D_FO();
@@ -94,7 +97,8 @@ $theConfig=[
         'broadcast','get_serverConfig','get_publickey','publickey',
         'login','loginStatus',
         'get_webs','send_webs',
-        'get_ports','send_ports'
+        'get_ports','send_ports',
+        'get_onlineNumber','send_onlineNumber'
     ],
     'automateTime'=>60,
 ];
@@ -231,20 +235,7 @@ ETX;
  */
 function getOnlineNumber(){
     global $socket_worker;
-    $users=[];
-    foreach ($socket_worker->connections as $con){
-        if(!property_exists($con,'email')){//匿名且未登录的socket
-            continue;
-        }
-        if($con->email===''){//空用户
-            continue;
-        }
-        if(in_array($con->email,$users)){//同一账号但不同会话的socket
-            continue;
-        }
-        array_push($users,$con->email);
-    }
-    return count($users);
+    return count($socket_worker->connections);
 }
 
 /**hub socket 连接事件
@@ -315,6 +306,11 @@ function handle_message($connection,$data){//收到客户端消息
                         $connection->send($instruct->send_ports($ports));
                         break;
                     }
+                    case 'get_onlineNumber':{
+                        $number=getOnlineNumber();
+                        $connection->send($instruct->send_onlineNumber($number));
+                        break;
+                    }
                     case 'get_serverConfig':{//获取服务器的配置
                         $config=[
                             'version'=>$Version,
@@ -350,21 +346,23 @@ function handle_start(){
     Timer::add(30,function(){
         reSendWebList();
         reSendPortsList();
+        reSendOnlineNumber();
     });
 }
 /**导出前端
  * @return string
  */
 function exportHtml(){
-    global $store,
-    $EtLayerHeadHtml,$EtLayerContentHtml,$EtLayerAnchorHtml,$EtLayerServicesHtml,$EtLayerNetworkHtml,
-    $EtLayerHead,         $EtLayerContent,        $EtLayerAnchor         ,$EtLayerServices,        $EtLayerNetwork;
+    global
+    $EtLayerHeadHtml,$EtLayerContentHtml,$EtLayerAnchorHtml,$EtLayerServicesHtml,$EtLayerNetworkHtml,$EtLayerVoiceHtml,
+    $EtLayerHead,         $EtLayerContent,        $EtLayerAnchor         ,$EtLayerServices,        $EtLayerNetwork,         $EtLayerVoice;
     $Scripts=file_get_contents("js/store.js");
     $EtLayerNetworkHtml=$EtLayerNetwork->export();
     $EtLayerHeadHtml=$EtLayerHead->export();
     $EtLayerContentHtml=$EtLayerContent->export();
     $EtLayerAnchorHtml=$EtLayerAnchor->export();
     $EtLayerServicesHtml=$EtLayerServices->export();
+    $EtLayerVoiceHtml=$EtLayerVoice->export();
     return <<<HTML
 <!DOCTYPE html>
 <html lang="zh">
@@ -380,6 +378,7 @@ function exportHtml(){
     $EtLayerContentHtml
     $EtLayerAnchorHtml
     $EtLayerServicesHtml
+    $EtLayerVoiceHtml
 </body>
 </html>
 HTML;
@@ -404,6 +403,18 @@ function reSendPortsList(){
     global $socket_worker,$instruct,$store;
     $ports=$store->getPortList();
     $ins=$instruct->send_ports($ports);
+    $ins=$instruct->send_onlineNumber(getOnlineNumber());
+    foreach($socket_worker->connections as $con){
+        $con->send($ins);
+    }
+}
+
+/**reSendOnlineNumber
+ * @return void
+ */
+function reSendOnlineNumber(){
+    global $socket_worker,$instruct;
+    $ins=$instruct->send_onlineNumber(getOnlineNumber());
     foreach($socket_worker->connections as $con){
         $con->send($ins);
     }
