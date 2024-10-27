@@ -16,6 +16,6 @@ docker
 .pid
 database.sqlite
 workerman.log
-.crt
-.csr
-.key
+server.crt
+server.csr
+server.key
