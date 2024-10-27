@@ -5,6 +5,7 @@ logs
 .idea
 .DS_Store
 vendor/
+log/
 /.vscode
 composer.lock
 phpunit.xml
