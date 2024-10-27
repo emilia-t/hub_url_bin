@@ -11,14 +11,27 @@ class LayerContent {
         $this->theme = $theme;
     }
     // 输出 html 代码
-    public function export($webList){
-        $backgroundColor = $this->theme === 'dark' ? '#333' : '#fff';// 根据主题选择不同的样式
-        $textColor = $this->theme === 'dark' ? '#fff' : '#000';
-        $html = <<<HTML
+    public function export(){
+        $styles=$this->Styles();
+        $scripts=$this->Scripts();
+        $html=<<<HTML
         <style>
-            body {
-                background-color: {$backgroundColor};
-                color: {$textColor};
+            $styles
+        </style>
+        <div class="LayerContent" id="LayerContent">
+        
+        </div>
+        <script>
+            $scripts
+        </script>
+HTML;
+        return $html;
+    }
+    private function Styles(){
+        return <<<CSS
+            body{
+                background-color: #ffffff;
+                color: #000000;
                 font-family: Arial, sans-serif;
                 display: flex;
                 justify-content: center;
@@ -26,17 +39,18 @@ class LayerContent {
                 height: 100vh;
                 margin: 0;
             }
-            .app-grid {
+            .LayerContent {
+                margin-top: 120px;
                 display: flex;
                 flex-wrap: wrap;
                 gap: 20px;
                 justify-content: center;
             }
-            .app-item {
-                width: 120px;
-                height: 120px;
-                background-color: {$textColor};
-                color: {$backgroundColor};
+            .LayerContentAppItem {
+                width: 90px;
+                height: 90px;
+                background-color: #9caff2;
+                color: #000000;
                 border-radius: 10px;
                 display: flex;
                 flex-direction: column;
@@ -47,30 +61,35 @@ class LayerContent {
                 text-decoration: none;
                 padding: 10px;
             }
-            .app-item img {
-                width: 40px;
-                height: 40px;
+            .LayerContentAppItem-dark{
+                background-color: #000000;
+                color: #ffffff;
+            }
+            .LayerContentAppItem-white{
+                background-color: #9caff2;
+                color: #000000;
+            }
+            .LayerContentAppTitle {
+                width: 100%;
+                height: auto;
+                max-height: 36px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .LayerContentAppItem img {
+                width: 30px;
+                height: 30px;
                 margin-bottom: 10px;
             }
-            .app-item span {
+            .LayerContentAppItem span {
                 font-size: 14px;
                 word-wrap: break-word;
             }
-        </style>
-        <div class="app-grid">
-HTML;
-        foreach ($webList as $web) {
-            $url = $web['url'];
-            $title = htmlspecialchars($web['title'], ENT_QUOTES, 'UTF-8');
-            $favicon = $url . '/favicon.ico'; // 使用 favicon
-            $html .= <<<HTML
-            <a href="{$url}" class="app-item" target="_blank">
-                <img src="{$favicon}" alt="{$title} favicon" onerror="this.src='default-icon.png'"/>
-                <span>{$title}</span>
-            </a>
-HTML;
-        }
-        $html .= '</div>';
-        return $html;
+CSS;
+    }
+    private function Scripts(){
+        $Scripts=file_get_contents("js/LayerContent.js");
+        return $Scripts!==false?$Scripts:"";
     }
 }

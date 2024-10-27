@@ -27,7 +27,7 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 WORKDIR /var/www
 
 # 暴露 Workerman 监听的默认端口（可根据实际情况调整）
-EXPOSE 80
+EXPOSE 80 20000
 
 # 将 Workerman 的入口脚本作为容器的默认执行命令
 CMD ["php", "B_backend.php", "start"]

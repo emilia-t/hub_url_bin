@@ -1,0 +1,8 @@
+LayerAnchor
+主题名称                            dark
+background                    #121212
+color                               #ffffff
+
+主题名称                            white
+background                    #fefefe
+color                               #121212

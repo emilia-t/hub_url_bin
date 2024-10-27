@@ -25,7 +25,9 @@
     },
     "require": {
         "php": ">=7.0",
-        "ext-pdo": "*"
+        "ext-pdo": "*",
+        "ext-openssl": "*",
+        "ext-json": "*"
     },
     "suggest": {
         "ext-event": "For better performance. "

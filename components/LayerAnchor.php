@@ -1,6 +1,6 @@
 <?php
 /**
- * 右下角服务器描述信息
+ * 右下角描述信息
  * 用于显示主要的内容
  * $theme 主题可选项目：dark , white
  **/
@@ -10,50 +10,48 @@ class LayerAnchor{
     public function __construct($theme='dark'){
         $this->theme=$theme;
     }
-    //输出html代码
     public function export(){
-        $styles = $this->theme === 'dark' ? $this->darkStyles() : $this->whiteStyles();
+        $styles=$this->Styles();
+        $scripts=$this->Scripts();
         return <<<HTML
-<style>$styles</style>
-<div class="LayerAnchor">
-    Power by hub_url_bin (C) Minxi Wan Use PHP 7.3 & Workerman 4.1
+<style>
+    $styles
+</style>
+<div id="LayerAnchor" class="LayerAnchor-white">
+    Power by hub_url_bin (C) Minxi Wan
 </div>
+<script>
+    $scripts
+</script>
 HTML;
     }
-    // 暗黑模式样式
-    private function darkStyles() {
+    private function Styles(){
         return <<<CSS
-        .LayerAnchor{
+        #LayerAnchor{
+            opacity: 0.2;
             width: auto;
             height: 15px;
             font-size: 12px;
             font-weight: 100;
-            background: #121212;
-            color: #ffffff;
             padding: 10px;
             position: fixed;
             right: 0;
             bottom: 0;
             z-index: 600;
+            transition: 0.4s;
+        }
+        .LayerAnchor-dark{
+            background: #121212;
+            color: #ffffff;
+        }
+        .LayerAnchor-white{
+            background: #fefefe;
+            color: #121212;
         }
 CSS;
     }
-    // 白色模式样式
-    private function whiteStyles() {
-        return <<<CSS
-         .LayerAnchor{
-            width: auto;
-            height: 15px;
-            font-size: 12px;
-            font-weight: 100;
-            background: #fefefe;
-            color: #121212;
-            padding: 10px;
-            position: fixed;
-            right: 0;
-            bottom: 0;
-            z-index: 600;
-        }
-CSS;
+    private function Scripts(){
+        $Scripts=file_get_contents("js/LayerAnchor.js");
+        return $Scripts!==false?$Scripts:"";
     }
 }

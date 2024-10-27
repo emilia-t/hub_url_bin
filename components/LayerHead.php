@@ -10,118 +10,86 @@ class LayerHead {
         $this->theme = $theme;
     }
     // 输出html代码
-    public function export() {
-        $styles = $this->theme === 'dark' ? $this->darkStyles() : $this->whiteStyles();
+    public function export(){
+        $styles = $this->Styles();
+        $jsScript=$this->Scripts();
         return <<<HTML
-<style>$styles</style>
-<header class="header">
-   <nav class="navbar">
+<style>
+$styles
+</style>
+<header id="LayerHead" class="LayerHead-white">
+   <nav class="LayerHeadNav">
      <div class="logo">
-       HUB&nbsp;&nbsp;hub_url_bin
+       HUB
      </div>
      <ul class="menu">
-       <li><a href="#">Home</a></li>
-       <li><a href="#">About</a></li>
-       <li><a href="#">Services</a></li>
-       <li><a href="#">Contact</a></li>
+       <li><a class="LayerHeadA LayerHeadA-white" href="#">Home</a></li>
+       <li><a class="LayerHeadA LayerHeadA-white" id="LayerHeadTheme">$this->theme</a></li>
      </ul>
    </nav>
  </header>
+ <script>
+$jsScript
+</script>
 HTML;
     }
-    // 暗黑模式样式
-    private function darkStyles() {
-        return <<<CSS
-        body {
-            background-color: #121212;
-            color: #ffffff;
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-        .header {
-            width: calc(100% - 40px);
-            position: fixed;
-            z-index: 500;
-            top: 0;
-            left: 0;
-            background-color: #1f1f1f;
-            padding: 10px 20px;
-        }
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-        }
-        .menu {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            gap: 20px;
-        }
-        .menu li {
-            display: inline;
-        }
-        .menu a {
-            color: #ffffff;
-            text-decoration: none;
-            padding: 8px 12px;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-        .menu a:hover {
-            background-color: #444444;
-        }
-CSS;
+    private function Scripts(){
+        $Scripts=file_get_contents("js/LayerHead.js");
+        return $Scripts!==false?$Scripts:"";
     }
-    // 白色模式样式
-    private function whiteStyles() {
+    private function Styles() {
         return <<<CSS
-        body {
-            background-color: #ffffff;
-            color: #000000;
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-        .header {
+        #LayerHead {
             width: calc(100% - 40px);
             position: fixed;
             z-index: 500;
             top: 0;
             left: 0;
-            background-color: #f0f0f0;
             padding: 10px 20px;
         }
-        .navbar {
+        .LayerHead-white {
+            background-color: #f0f0f0;
+            color: #000000;
+        }
+        .LayerHead-dark {
+            background-color: #1f1f1f;
+            color: #ffffff;
+        }
+        .LayerHeadNav {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
+        .LayerHeadNav .logo {
+            font-size: 17px;
+            font-weight: 600;
         }
-        .menu {
+        .LayerHeadNav .menu {
             list-style: none;
             padding: 0;
             display: flex;
             gap: 20px;
         }
-        .menu li {
+        .LayerHeadNav .menu li {
             display: inline;
         }
-        .menu a {
-            color: #000000;
+        .LayerHeadA {
             text-decoration: none;
             padding: 8px 12px;
             border-radius: 4px;
             transition: background-color 0.3s;
         }
-        .menu a:hover {
+        .LayerHeadA-white {
+            color: #000000;
+        }
+        .LayerHeadA-dark {
+            color: #ffffff;
+        }
+        .LayerHeadA-hover-white {
             background-color: #dddddd;
+        }
+        .LayerHeadA-hover-dark {
+            background-color: #444444;
         }
 CSS;
     }
