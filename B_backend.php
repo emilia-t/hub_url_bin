@@ -2,12 +2,13 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// php设置///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 date_default_timezone_set('Asia/Hong_Kong');//设置时区
-require_once __DIR__ . '/workerman/Autoloader.php'; // 需要通过 Composer 安装 Workerman
+require_once __DIR__ . '/workerman/Autoloader.php';
 use Workerman\Worker;
 use Workerman\Timer;
 use Workerman\Connection\TcpConnection;
 use Workerman\Connection\AsyncTcpConnection;
 use Workerman\Protocols\Http\Response;
+use Workerman\Protocols\Http\Request;
 require_once  'B_installSqlite.php';
 require_once  'D_store.php';
 require_once  'D_JDT.php';
@@ -20,6 +21,7 @@ require_once 'components/LayerAnchor.php';
 require_once 'components/LayerServices.php';
 require_once 'components/LayerNetwork.php';
 require_once 'components/LayerVoice.php';
+require_once 'components/LayerLog.php';
 /// php设置///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -71,6 +73,8 @@ $EtLayerNetwork=new LayerNetwork();
 $EtLayerNetworkHtml=null;
 $EtLayerVoice=new LayerVoice();
 $EtLayerVoiceHtml=null;
+$EtLayerLog=new LayerLog();
+$EtLayerLogHtml=null;
 $newJDT=new D_JDT();
 $newQIR=new D_QIR();
 $newFO=new D_FO();
@@ -354,15 +358,16 @@ function handle_start(){
  */
 function exportHtml(){
     global
-    $EtLayerHeadHtml,$EtLayerContentHtml,$EtLayerAnchorHtml,$EtLayerServicesHtml,$EtLayerNetworkHtml,$EtLayerVoiceHtml,
-    $EtLayerHead,         $EtLayerContent,        $EtLayerAnchor         ,$EtLayerServices,        $EtLayerNetwork,         $EtLayerVoice;
+    $EtLayerNetworkHtml,$EtLayerHeadHtml,$EtLayerContentHtml,$EtLayerAnchorHtml,$EtLayerServicesHtml,$EtLayerVoiceHtml,$EtLayerLogHtml,
+    $EtLayerNetwork,         $EtLayerHead,         $EtLayerContent,        $EtLayerAnchor,        $EtLayerServices,         $EtLayerVoice,         $EtLayerLog;
     $Scripts=file_get_contents("js/store.js");
-    $EtLayerNetworkHtml=$EtLayerNetwork->export();
-    $EtLayerHeadHtml=$EtLayerHead->export();
-    $EtLayerContentHtml=$EtLayerContent->export();
-    $EtLayerAnchorHtml=$EtLayerAnchor->export();
-    $EtLayerServicesHtml=$EtLayerServices->export();
-    $EtLayerVoiceHtml=$EtLayerVoice->export();
+    if($EtLayerNetworkHtml===null){$EtLayerNetworkHtml=$EtLayerNetwork->export();}
+    if($EtLayerHeadHtml===null){$EtLayerHeadHtml=$EtLayerHead->export();}
+    if($EtLayerContentHtml===null){$EtLayerContentHtml=$EtLayerContent->export();}
+    if($EtLayerAnchorHtml===null){$EtLayerAnchorHtml=$EtLayerAnchor->export();}
+    if($EtLayerServicesHtml===null){$EtLayerServicesHtml=$EtLayerServices->export();}
+    if($EtLayerVoiceHtml===null){$EtLayerVoiceHtml=$EtLayerVoice->export();}
+    if($EtLayerLogHtml===null){$EtLayerLogHtml=$EtLayerLog->export();}
     return <<<HTML
 <!DOCTYPE html>
 <html lang="zh">
@@ -379,6 +384,7 @@ function exportHtml(){
     $EtLayerAnchorHtml
     $EtLayerServicesHtml
     $EtLayerVoiceHtml
+    $EtLayerLogHtml
 </body>
 </html>
 HTML;
@@ -540,7 +546,7 @@ function isWebService($ip, $port = 80) {
 //                $icon .= ":$port";
 //            }
 //            $icon .= '/favicon.ico';
-            $icon .= 'http://'.__MY_IP__.'/favicon.ico';
+            $icon .= 'https://'.__MY_IP__.'/favicon.ico';
         }
         // 构造 URL
         $protocol = ($port === 443) ? 'https' : 'http';
@@ -595,7 +601,11 @@ function scan(){
 echo __LANGUAGE__==='chinese'?"中文Chinese\n":"English英文\n";
 echo __LANGUAGE__==='chinese'?'URL收纳箱 版本 '.__VERSION__."\n":'OnlineMapServer Version '.__VERSION__."\n";
 echo __LANGUAGE__==='chinese'?"(c) Minxi Wan，保留所有权利。\n":"(c) Minxi Wan All right reserved.\n";
+
+
 usleep(1000000);
+
+
 $workerA=new Worker();//网络扫描
 $workerA->count=1;
 $workerA->onWorkerStart=function(){
@@ -604,43 +614,105 @@ $workerA->onWorkerStart=function(){
         scan();
     });
 };
-$workerB=new Worker('tcp://0.0.0.0:80');//web服务
+
+
+$workerE=new Worker('http://0.0.0.0:80');//端口重定向
+$workerE->count=1;
+$workerE->onMessage=function(TcpConnection $connection, Request $request){// 重定向到 HTTPS 端口
+    $host = $request->host(); // 获取请求的主机名和端口
+    $redirectUrl = "https://{$host}{$request->uri()}"; // 构造重定向 URL
+    $response = new Response();
+    $response->withStatus(301); // 设置重定向状态码
+    $response->withHeader('Location', $redirectUrl); // 设置 Location 头部
+    $connection->send($response);
+};
+
+
+$context=['ssl'=>['local_cert'=>'server.crt','local_pk'=>'server.key','verify_peer'=>false]];
+$workerB=new Worker('http://0.0.0.0:443',$context);//web服务
+$workerB->transport='ssl';
 $workerB->count=10;
-$workerB->onMessage = function (TcpConnection $connection, $data) {
-    // 解析请求的第一行，通常是类似于 "GET / HTTP/1.1" 的内容
-    if (preg_match('/^GET\s+(.*?)\s+HTTP\/\d\.\d/', $data, $matches)) {
-        $path = $matches[1]; // 获取请求路径
-        // 根据请求的路径来区分是页面请求还是图标请求
-        if ($path === '/') {
-            // 这是网页整体请求
-            // 发送 HTTP 头部
-            $connection->send("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n");
-            // 发送 HTML 内容
-            $connection->send(exportHtml()); // 返回网页内容
-        } elseif ($path === '/favicon.ico') {
-            // 这是图标请求
-            // 发送 HTTP 头部
-            $connection->send("HTTP/1.1 200 OK\r\nContent-Type: image/x-icon\r\n\r\n");
-            // 读取图标文件并发送
-            $icon = file_get_contents(__DIR__ . '/favicon.ico');
-            $connection->send($icon); // 返回图标内容
-        } else {
-            // 如果请求的路径不是已知的，返回 404 Not Found
-            $connection->send("HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\n");
-            $connection->send("<h1>404 Not Found</h1>");
-        }
-    } else {
-        // 如果请求格式不正确，也返回 400 Bad Request
-        $connection->send("HTTP/1.1 400 Bad Request\r\nContent-Type: text/html\r\n\r\n");
-        $connection->send("<h1>400 Bad Request</h1>");
+$workerB->onConnect = function ($connection) {
+    echo "新客户端连接：id ".$connection->id."\n";
+};
+$workerB->onMessage = function (TcpConnection $connection, Request $request) {
+    $response = new Response();
+    $response->withHeader('Access-Control-Allow-Origin', '*'); // 允许所有域
+    $response->withHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS'); // 允许的请求方法
+    $response->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // 允许的请求头
+    if ($request->method() === 'OPTIONS') {//处理预检请求（客户端发起的预先检测服务器配置请求）
+        $response->withStatus(204); // 返回204 No Content 响应
+        $connection->send($response);
     }
-    // 关闭连接，表示响应结束
+    $path = $request->path(); // 获取请求路径
+    switch ($path) {
+        case '/':
+            $response->withHeader('Content-Type', 'text/html; charset=utf-8');
+            $html = exportHtml();
+            $response->withbody($html);
+            break;
+
+        case '/favicon.ico':
+            $response->withHeader('Content-Type', 'image/x-icon');
+            $faviconContent = file_get_contents('favicon.ico');
+            $response->withbody($faviconContent);
+            break;
+
+        case '/json':
+            $response->withHeader('Content-Type', 'application/json');
+            $data = ['message' => 'This is JSON data'];
+            $response->withbody(json_encode($data));
+            break;
+
+        case '/js/libmp3lame.min.js':
+            $response->withHeader('Content-Type', 'application/javascript');
+            $jsContent = file_get_contents('/js/libmp3lame.min.js');
+            $response->withBody($jsContent);
+            break;
+
+        default:
+            $response->withStatus(404);
+            $response->withHeader('Content-Type', 'text/html; charset=utf-8');
+            $response->withbody('404 Not Found');
+            break;
+    }
+    $connection->send($response);
     $connection->close();
 };
-$socket_worker=new Worker('websocket://0.0.0.0:20000');//局域网通信服务器
+
+
+$socket_worker=new Worker('websocket://0.0.0.0:20000',$context);//局域网通信服务器
+$socket_worker->transport = 'ssl';
 $socket_worker->count=1;
 $socket_worker->onConnect='handle_connection';
 $socket_worker->onMessage='handle_message';
 $socket_worker->onClose='handle_close';
 $socket_worker->onWorkerStart='handle_start';
+
+
+$voice_worker = new Worker('websocket://0.0.0.0:30000', $context);
+$voice_worker->transport = 'ssl';
+$voice_worker->count = 1;
+
+$clients = []; // 客户端连接列表
+
+$voice_worker->onConnect = function($connection) use (&$clients) {
+    $clients[$connection->id] = $connection;
+    echo "语音客户端已连接：id " . $connection->id . "\n";
+};
+
+$voice_worker->onMessage = function($connection, $data) use (&$voice_worker) {
+    $nowId = $connection->id;
+    foreach ($voice_worker->connections as $client) {
+        if ($client->id !== $nowId) {
+            $client->send($data); // 直接转发base64编码数据
+        }
+    }
+};
+
+$voice_worker->onClose = function($connection) use (&$clients) {
+    unset($clients[$connection->id]);
+    echo "语音客户端已断开连接：id " . $connection->id . "\n";
+};
+
 Worker::runAll();

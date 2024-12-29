@@ -265,7 +265,7 @@ class Instruct{//综合的一个连接服务端的通讯类
                 // }
                 // 指令截取
                 // 始终输出发送的指令
-                if(true){
+                if(false){
                     console.log("%c↓↓↓发送出去的指令↓↓↓","color:blue;");
                     console.log(JSON.parse(JSON.stringify(instructObj)));
                     console.log("%c↑↑↑发送出去的指令↑↑↑","color:blue;");
@@ -327,7 +327,7 @@ class Instruct{//综合的一个连接服务端的通讯类
         // }
         // 指令截取
         // 始终输出接收的指令
-        if(true){
+        if(false){
             console.log("%c↓↓↓接收到的指令↓↓↓","color:green;");
             console.log(JSON.parse(JSON.stringify(jsonData)));
             console.log("%c↑↑↑接收到的指令↑↑↑","color:green;");

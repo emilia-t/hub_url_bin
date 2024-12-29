@@ -36,4 +36,5 @@ $store['config.version']=null;
 $store['webs']=[];// [ { 'url':'xxxx', 'icon':'xxxx', 'title':'xxxx' } ]
 $store['ports']=[];// [ { 'ip':'xxxx', 'ports':'xxxx, xxxx' } ]
 $store['onlineNumber']=0;
+$store['muted']=false;//禁用语音状态
 for(let [key,value] of Object.entries($store)){watch($store,key);}

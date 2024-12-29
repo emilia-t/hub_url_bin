@@ -12,7 +12,8 @@ class LayerNetwork{
     }
     function export(){
         $Instruct=file_get_contents("js/Instruct.js");
-        $ipPort='ws://'.__MY_IP__.':20000';
+        $lame=file_get_contents("js/libmp3lame.min.js");
+        $ipPort='wss://'.__MY_IP__.':20000';
         return <<<HTML
 <script>
     let INSTRUCT =$Instruct;
