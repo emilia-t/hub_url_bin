@@ -40,7 +40,7 @@ let getNewItemService=(ip,ports)=>{
             ipPort='http://'+ip+':'+port;
         }
         let domA=document.createElement('A');
-        domA.setAttribute('href','ipPort');
+        domA.setAttribute('href',ipPort);
         domA.setAttribute('target','_blank');
         domA.innerText=port;
         domPorts.append(domA);
