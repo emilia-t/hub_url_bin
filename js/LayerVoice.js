@@ -3,7 +3,7 @@
 // 它是音频处理中最基本的格式，很多高级格式（如MP3、AAC等）都是基于PCM数据进行压缩的。
 // PCM数据本质上就是对音频波形的采样数据点序列，因此包含了每个采样点的振幅信息。
 let voiceSocket=null;// 通信器
-let sendInterval =80;// 每隔0.08秒发送音频数据
+let sendInterval =500;// 每隔0.5秒发送音频数据
 let layerVoiceContainer =document.getElementById('LayerVoiceContainer');
 let LayerVoiceAudioA=document.getElementById('LayerVoiceAudioA');
 let LayerVoiceOpen=document.getElementById('LayerVoiceOpen');
